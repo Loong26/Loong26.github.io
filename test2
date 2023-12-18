@@ -1,0 +1,94 @@
+import java.io.*;
+import java.util.*;
+import java.text.*;
+//    Khai báo lớp Sinh Viên gồm các thông tin: Mã SV, Họ tên, Ngày sinh, Lớp và Điểm GPA (dạng số thực).
+class SinhVien {
+    static int count_maSV = 1;
+    String maSV, hoTen, ngaySinh, lop;
+    double diemGPA;
+    public SinhVien(String hoTen, String lop, String ngaySinh, double diemGPA) {
+        this.hoTen = hoTen;
+        this.lop = lop;
+        setNgaySinh(ngaySinh);
+        this.diemGPA = diemGPA;
+        setMaSV(maSV);
+    }
+
+    public void setMaSV(String maSV) {
+        this.maSV = "B20DCCN" + String.format("%03d", count_maSV++);
+    }
+    public void setNgaySinh(String ngaySinh) {
+//        format ngay sinh theo dinh dang dd/mm/yyyy
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        try {
+            Date date = sdf.parse(ngaySinh);
+            this.ngaySinh = sdf.format(date);
+        } catch (Exception e) {
+        }
+    }
+    @Override
+    public String toString() {
+//            B20DCCN001 Nguyen Van A 01/01/2000 K62 3.25 (diem GPA lam tron 2 chu so thap phan)
+        return maSV + " " + hoTen + " " + lop + " " + ngaySinh + " " + String.format("%.2f", diemGPA);
+    }
+}
+
+public class J07010 {
+
+    public static void main(String[] args) throws Exception {
+        File file = new File("SV.in");
+        Scanner sc = new Scanner(file);
+        ArrayList<SinhVien> list = new ArrayList<>();
+// dong dau chua so luong sinh vien
+        int n = Integer.parseInt(sc.nextLine());
+        for(int i = 0; i < n; ++i) {
+            String hoTen = sc.nextLine();
+            String lop = sc.nextLine();
+            String ngaySinh = sc.nextLine();
+            double diemGPA = Double.parseDouble(sc.nextLine());
+            SinhVien sinhVien = new SinhVien(hoTen, lop, ngaySinh, diemGPA);
+            list.add(sinhVien);
+        }
+// sắp xếp theo Tên, sau do den ten dem, sau do den ho
+        Collections.sort(list, new Comparator<SinhVien>() {
+            @Override
+            public int compare(SinhVien o1, SinhVien o2) {
+                String[] str1 = o1.hoTen.split("\\s+");
+                String[] str2 = o2.hoTen.split("\\s+");
+                String ten1 = str1[str1.length - 1];
+                String ten2 = str2[str2.length - 1];
+                String tenDem1 = "";
+                String tenDem2 = "";
+                for (int i = 0; i < str1.length - 1; i++) {
+                    tenDem1 += str1[i] + " ";
+                }
+                for (int i = 0; i < str2.length - 1; i++) {
+                    tenDem2 += str2[i] + " ";
+                }
+                if(ten1.compareTo(ten2) > 0) {
+                    return 1;
+                } else if(ten1.compareTo(ten2) < 0) {
+                    return -1;
+                } else {
+                    if(tenDem1.compareTo(tenDem2) > 0) {
+                        return 1;
+                    } else if(tenDem1.compareTo(tenDem2) < 0) {
+                        return -1;
+                    } else {
+                        if(o1.hoTen.compareTo(o2.hoTen) > 0) {
+                            return 1;
+                        } else if(o1.hoTen.compareTo(o2.hoTen) < 0) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    }
+                }
+            }
+        });
+
+        for (SinhVien sinhVien : list) {
+            System.out.println(sinhVien);
+        }
+    }
+}
